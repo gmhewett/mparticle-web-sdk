@@ -89,6 +89,7 @@ export interface SDKConfig {
     webviewBridgeName?: string;
     workspaceToken?: string;
     requiredWebviewBridgeName?: string;
+    omitBatchTimestamp?: boolean;
 }
 
 function createSDKConfig(config: SDKInitConfig): SDKConfig {
@@ -476,6 +477,10 @@ export default function Store(
                 // set to undefined because all items are set on createSDKConfig
                 this.SDKConfig.onCreateBatch = undefined;
             }
+        }
+
+        if (config.hasOwnProperty('omitBatchTimestamp')) {
+            this.SDKConfig.omitBatchTimestamp = config.omitBatchTimestamp;
         }
     }
 

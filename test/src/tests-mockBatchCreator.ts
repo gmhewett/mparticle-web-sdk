@@ -3,13 +3,14 @@ import { BaseEvent } from '../../src/sdkRuntimeModels';
 import { expect } from 'chai';
 
 describe('Create a batch from a base event', () => {
-    const batchValidator = new _BatchValidator();
     const baseEvent: BaseEvent = {
         messageType: 4,
         name: 'testEvent'
     }
     
     it('creates a batch with base event ', done => {
+        const batchValidator = new _BatchValidator()
+
         let batch = batchValidator.returnBatch(baseEvent);
 
         expect(batch).to.have.property('environment').equal('production');
@@ -52,6 +53,37 @@ describe('Create a batch from a base event', () => {
         batch = batchValidator.returnBatch(baseEvent);
         expect(batch.events[0].data).to.have.property('custom_flags');
         expect(batch.events[0].data.custom_flags).to.have.property('flagFoo', 'flagBar');
+
+        done();
+    });
+
+    it('respects the omitBatchTimestamp config value', done => {
+        const now = new Date().getTime();
+
+        // with default config (should send timestamp)
+        let batchValidator = new _BatchValidator();
+        let batch = batchValidator.returnBatch(baseEvent);
+        expect(batch).to.have.property('timestamp_unixtime_ms').greaterThanOrEqual(now);
+
+        // with undefined for omitBatchTimestamp config value (should send timestamp)
+        batchValidator = new _BatchValidator({omitBatchTimestamp: undefined });
+        batch = batchValidator.returnBatch(baseEvent);
+        expect(batch).to.have.property('timestamp_unixtime_ms').greaterThanOrEqual(now);
+
+        // with null for omitBatchTimestamp config value (should send timestamp)
+        batchValidator = new _BatchValidator({omitBatchTimestamp: null });
+        batch = batchValidator.returnBatch(baseEvent);
+        expect(batch).to.have.property('timestamp_unixtime_ms').greaterThanOrEqual(now);
+
+        // with false for omitBatchTimestamp config value (should send timestamp)
+        batchValidator = new _BatchValidator({omitBatchTimestamp: false });
+        batch = batchValidator.returnBatch(baseEvent);
+        expect(batch).to.have.property('timestamp_unixtime_ms').greaterThanOrEqual(now);
+
+        // with true for omitBatchTimestamp config value (should not send timestamp)
+        batchValidator = new _BatchValidator({omitBatchTimestamp: true });
+        batch = batchValidator.returnBatch(baseEvent);
+        expect(batch).to.have.property('timestamp_unixtime_ms', null);
 
         done();
     });
