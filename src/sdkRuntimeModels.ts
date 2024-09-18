@@ -246,6 +246,7 @@ export interface SDKInitConfig
 
     workspaceToken?: string;
     isDevelopmentMode?: boolean;
+    omitBatchTimestamp?: boolean
 
     // https://go.mparticle.com/work/SQDSDKS-6460
     identityCallback?: IdentityCallback;

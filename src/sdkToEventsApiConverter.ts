@@ -59,7 +59,9 @@ export function convertEvents(
     const upload: EventsApi.Batch = {
         source_request_id: mpInstance._Helpers.generateUniqueId(),
         mpid,
-        timestamp_unixtime_ms: new Date().getTime(),
+        timestamp_unixtime_ms: mpInstance._Store.SDKConfig.omitBatchTimestamp
+            ? null
+            : new Date().getTime(),
         environment: lastEvent.Debug
             ? EventsApi.BatchEnvironmentEnum.development
             : EventsApi.BatchEnvironmentEnum.production,

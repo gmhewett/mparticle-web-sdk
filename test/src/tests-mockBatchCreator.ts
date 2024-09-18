@@ -3,19 +3,21 @@ import { BaseEvent } from '../../src/sdkRuntimeModels';
 import { expect } from 'chai';
 
 describe('Create a batch from a base event', () => {
-    const batchValidator = new _BatchValidator();
     const baseEvent: BaseEvent = {
         messageType: 4,
         name: 'testEvent'
     }
-    
+
     it('creates a batch with base event ', done => {
+        const now = new Date().getTime();
+        const batchValidator = new _BatchValidator()
+
         let batch = batchValidator.returnBatch(baseEvent);
 
         expect(batch).to.have.property('environment').equal('production');
         expect(batch).to.have.property('source_request_id').equal('mockId');
         expect(batch).to.have.property('mpid').equal('0');
-        expect(batch).to.have.property('timestamp_unixtime_ms')
+        expect(batch).to.have.property('timestamp_unixtime_ms').greaterThanOrEqual(now)
         expect(batch).to.have.property('mp_deviceid');
         expect(batch).to.have.property('sdk_version')
         expect(batch).to.have.property('application_info');
@@ -47,7 +49,7 @@ describe('Create a batch from a base event', () => {
         batch = batchValidator.returnBatch(baseEvent);
         expect(batch.events[0].data).to.have.property('custom_attributes');
         expect(batch.events[0].data.custom_attributes).to.have.property('attrFoo', 'attrBar');
-        
+
         baseEvent.customFlags = { flagFoo: 'flagBar' }
         batch = batchValidator.returnBatch(baseEvent);
         expect(batch.events[0].data).to.have.property('custom_flags');
@@ -55,4 +57,21 @@ describe('Create a batch from a base event', () => {
 
         done();
     });
+
+    [undefined, null, false, true].forEach(omitBatchTimestamp => {
+        it(`respects an omitBatchTimestamp config value of ${omitBatchTimestamp}`, done => {
+            const now = new Date().getTime();
+            const batchValidator = new _BatchValidator({omitBatchTimestamp});
+
+            const batch = batchValidator.returnBatch(baseEvent);
+
+            if (omitBatchTimestamp) {
+                expect(batch).to.have.property('timestamp_unixtime_ms', null)
+            } else {
+                expect(batch).to.have.property('timestamp_unixtime_ms').greaterThanOrEqual(now);
+            }
+
+            done();
+        });
+    })
 });

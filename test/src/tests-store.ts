@@ -261,6 +261,7 @@ describe('Store', () => {
                 store.SDKConfig.v3SecureServiceUrl,
                 'v3SecureServiceUrl'
             ).to.eq('jssdks.mparticle.com/v3/JS/');
+            expect(store.SDKConfig.omitBatchTimestamp).to.be.undefined
         });
 
         it('should assign expected values to dataPlan', () => {
@@ -281,6 +282,25 @@ describe('Store', () => {
                 PlanVersion: 3,
             });
         });
+
+        [undefined, null, true, false].forEach((omitBatchTimestamp?: boolean) => {
+            it(`should assign ${omitBatchTimestamp} for omitBatchTimestamp config value`, () => {
+                let dataPlanConfig = {
+                    ...sampleConfig,
+                    omitBatchTimestamp
+                };
+
+                let store: IStore = new Store(
+                    dataPlanConfig,
+                    window.mParticle.getInstance()
+                );
+
+                expect(
+                    store.SDKConfig.omitBatchTimestamp,
+                    'omitBatchTimestamp'
+                ).to.equal(omitBatchTimestamp);
+            });
+        })
 
         it('should assign expected values to side loaded kits', () => {
             const sideloadedKit1 = new MockSideloadedKit();
