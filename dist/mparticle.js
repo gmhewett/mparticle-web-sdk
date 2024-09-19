@@ -1442,7 +1442,7 @@ var mParticle = (function () {
       var upload = {
         source_request_id: mpInstance._Helpers.generateUniqueId(),
         mpid: mpid,
-        timestamp_unixtime_ms: mpInstance._Store.SDKConfig.omitBatchTimestamp ? null : new Date().getTime(),
+        timestamp_unixtime_ms: new Date().getTime(),
         environment: lastEvent.Debug ? dist.BatchEnvironmentEnum.development : dist.BatchEnvironmentEnum.production,
         events: uploadEvents,
         mp_deviceid: lastEvent.DeviceId,
@@ -4063,9 +4063,6 @@ var mParticle = (function () {
             // set to undefined because all items are set on createSDKConfig
             this.SDKConfig.onCreateBatch = undefined;
           }
-        }
-        if (config.hasOwnProperty('omitBatchTimestamp')) {
-          this.SDKConfig.omitBatchTimestamp = config.omitBatchTimestamp;
         }
       }
       this._getFromPersistence = function (mpid, key) {
@@ -10196,11 +10193,8 @@ var mParticle = (function () {
       return null;
     };
     var _BatchValidator = /** @class */function () {
-      function _BatchValidator(configOverride) {
-        this.configOverride = configOverride;
-      }
+      function _BatchValidator() {}
       _BatchValidator.prototype.getMPInstance = function () {
-        var _a;
         return {
           // Certain Helper, Store, and Identity properties need to be mocked to be used in the `returnBatch` method
           _Helpers: {
@@ -10274,8 +10268,7 @@ var mParticle = (function () {
             },
             SDKConfig: {
               isDevelopmentMode: false,
-              onCreateBatch: mockFunction,
-              omitBatchTimestamp: (_a = this.configOverride) === null || _a === void 0 ? void 0 : _a.omitBatchTimestamp
+              onCreateBatch: mockFunction
             }
           },
           config: null,
