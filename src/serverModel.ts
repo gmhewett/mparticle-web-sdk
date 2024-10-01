@@ -342,10 +342,6 @@ export default function ServerModel(
                 };
             }
 
-            if (event.batchTimestampUnixtimeMsOverride !== undefined) {
-                eventObject.BatchTimestampUnixtimeMsOverride = event.batchTimestampUnixtimeMsOverride
-            }
-
             // TODO: Should we move this side effect outside of this method?
             if (event.messageType !== Types.MessageType.SessionEnd) {
                 mpInstance._Store.dateLastEventSent = new Date();

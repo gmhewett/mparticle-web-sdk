@@ -328,7 +328,6 @@ export interface BaseEvent {
     sourceMessageId?: string;
     userAttributeChanges?: ISDKUserAttributeChangeData;
     userIdentityChanges?: ISDKUserIdentityChanges;
-    batchTimestampUnixtimeMsOverride?: number;
 }
 
 export interface KitBlockerOptions {
