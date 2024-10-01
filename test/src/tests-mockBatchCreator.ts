@@ -3,14 +3,13 @@ import { BaseEvent } from '../../src/sdkRuntimeModels';
 import { expect } from 'chai';
 
 describe('Create a batch from a base event', () => {
+    const batchValidator = new _BatchValidator();
     const baseEvent: BaseEvent = {
         messageType: 4,
         name: 'testEvent'
     }
-
     it('creates a batch with base event ', done => {
         const now = new Date().getTime();
-        const batchValidator = new _BatchValidator()
 
         let batch = batchValidator.returnBatch(baseEvent);
 
@@ -58,20 +57,35 @@ describe('Create a batch from a base event', () => {
         done();
     });
 
-    [undefined, null, false, true].forEach(omitBatchTimestamp => {
-        it(`respects an omitBatchTimestamp config value of ${omitBatchTimestamp}`, done => {
-            const now = new Date().getTime();
-            const batchValidator = new _BatchValidator({omitBatchTimestamp});
+    it('creates a batch with a batch timestamp override from the last event', done => {
+        const now = new Date().getTime();
+        const oneDayAgo = now - (24 * 3600 * 1000);
 
-            const batch = batchValidator.returnBatch(baseEvent);
+        // should set the batch timestmap to oneDayAgo
+        let eventWithBatchTimestamp: BaseEvent = {
+            ...baseEvent,
+            batchTimestampUnixtimeMsOverride: oneDayAgo
+        }
+        let batch = batchValidator.returnBatch(eventWithBatchTimestamp);
 
-            if (omitBatchTimestamp) {
-                expect(batch).to.have.property('timestamp_unixtime_ms', null)
-            } else {
-                expect(batch).to.have.property('timestamp_unixtime_ms').greaterThanOrEqual(now);
-            }
+        expect(batch).to.have.property('timestamp_unixtime_ms').equal(oneDayAgo);
 
-            done();
-        });
-    })
+        // should set the batch timestmap to null
+        eventWithBatchTimestamp = {
+            ...baseEvent,
+            batchTimestampUnixtimeMsOverride: null
+        }
+        batch = batchValidator.returnBatch(eventWithBatchTimestamp);
+        expect(batch).to.have.property('timestamp_unixtime_ms').null;
+
+        // since batchTimestampUnixtimeMsOverride is undefined, the current time should be used
+        eventWithBatchTimestamp = {
+            ...baseEvent,
+            batchTimestampUnixtimeMsOverride: undefined
+        }
+        batch = batchValidator.returnBatch(eventWithBatchTimestamp);
+        expect(batch).to.have.property('timestamp_unixtime_ms').greaterThanOrEqual(now);
+
+        done();
+    });
 });

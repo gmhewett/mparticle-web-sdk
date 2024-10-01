@@ -70,6 +70,7 @@ export interface SDKEvent {
     DataPlan?: SDKDataPlan;
     LaunchReferral?: string;
     ExpandedEventCount: number;
+    BatchTimestampUnixtimeMsOverride?: number;
 }
 export interface SDKGeoLocation {
     lat: number | string;
@@ -246,7 +247,6 @@ export interface SDKInitConfig
 
     workspaceToken?: string;
     isDevelopmentMode?: boolean;
-    omitBatchTimestamp?: boolean
 
     // https://go.mparticle.com/work/SQDSDKS-6460
     identityCallback?: IdentityCallback;
@@ -328,6 +328,7 @@ export interface BaseEvent {
     sourceMessageId?: string;
     userAttributeChanges?: ISDKUserAttributeChangeData;
     userIdentityChanges?: ISDKUserIdentityChanges;
+    batchTimestampUnixtimeMsOverride?: number;
 }
 
 export interface KitBlockerOptions {

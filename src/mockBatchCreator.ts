@@ -11,8 +11,6 @@ const mockFunction = function() {
     return null;
 };
 export default class _BatchValidator {
-    constructor(private configOverride?: {omitBatchTimestamp?: boolean}) {}
-
     private getMPInstance() {
         return ({
             // Certain Helper, Store, and Identity properties need to be mocked to be used in the `returnBatch` method
@@ -89,7 +87,6 @@ export default class _BatchValidator {
                 SDKConfig: {
                     isDevelopmentMode: false,
                     onCreateBatch: mockFunction,
-                    omitBatchTimestamp: this.configOverride?.omitBatchTimestamp,
                 },
             },
             config: null,
