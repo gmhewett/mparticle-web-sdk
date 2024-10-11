@@ -92,11 +92,6 @@ export default function APIClient(
         };
         const options = mpInstance._Helpers.extend(defaultOptions, _options);
 
-        // check to see if the event options contain a batch timestamp override
-        if (options.batchTimestampUnixtimeMsOverride !== undefined) {
-            event.BatchTimestampUnixtimeMsOverride = options.batchTimestampUnixtimeMsOverride;
-        }
-
         if (mpInstance._Store.webviewBridgeEnabled) {
             mpInstance._NativeSdkHelpers.sendToNative(
                 Constants.NativeSdkPaths.LogEvent,

@@ -11,6 +11,20 @@ const mockFunction = function() {
     return null;
 };
 export default class _BatchValidator {
+    private configOverride?: {omitBatchTimestamp?: boolean};
+    private storeOverride?: {batchTimestampUnixtimeMsOverride?: number}
+
+    constructor({
+        configOverride = {},
+        storeOverride = {}
+    }: {
+        configOverride?: {omitBatchTimestamp?: boolean},
+        storeOverride?: {batchTimestampUnixtimeMsOverride?: number}
+    } = {}) {
+        this.configOverride = configOverride
+        this.storeOverride = storeOverride
+    }
+
     private getMPInstance() {
         return ({
             // Certain Helper, Store, and Identity properties need to be mocked to be used in the `returnBatch` method
@@ -87,7 +101,9 @@ export default class _BatchValidator {
                 SDKConfig: {
                     isDevelopmentMode: false,
                     onCreateBatch: mockFunction,
+                    omitBatchTimestamp: this.configOverride?.omitBatchTimestamp,
                 },
+                batchTimestampUnixtimeMsOverride: this.storeOverride?.batchTimestampUnixtimeMsOverride
             },
             config: null,
             eCommerce: null,
