@@ -6,20 +6,21 @@ import { convertEvents } from './sdkToEventsApiConverter';
 import * as EventsApi from '@mparticle/event-models';
 import { Batch } from '@mparticle/event-models';
 import { IMPSideloadedKit } from './sideloadedKit';
+import { IStore, SDKConfig } from './store';
 
 const mockFunction = function() {
     return null;
 };
 export default class _BatchValidator {
-    private configOverride?: {omitBatchTimestamp?: boolean};
-    private storeOverride?: {batchTimestampUnixtimeMsOverride?: number}
+    private configOverride?: Partial<Pick<SDKConfig, 'omitBatchTimestamp'>>;
+    private storeOverride?: Partial<Pick<IStore, 'batchTimestampUnixtimeMsOverride'>>;
 
     constructor({
         configOverride = {},
         storeOverride = {}
     }: {
-        configOverride?: {omitBatchTimestamp?: boolean},
-        storeOverride?: {batchTimestampUnixtimeMsOverride?: number}
+        configOverride?: Partial<Pick<SDKConfig, 'omitBatchTimestamp'>>,
+        storeOverride?: Partial<Pick<IStore, 'batchTimestampUnixtimeMsOverride'>>
     } = {}) {
         this.configOverride = configOverride
         this.storeOverride = storeOverride
